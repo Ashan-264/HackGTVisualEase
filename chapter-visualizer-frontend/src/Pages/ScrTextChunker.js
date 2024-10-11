@@ -112,8 +112,8 @@ const Button = styled.button`
   transition: all 0.75s ease;
 
   &:hover {
-  filter: brightness(130%);
-  cursor: pointer;
+    filter: brightness(130%);
+    cursor: pointer;
   }
 `;
 
@@ -145,12 +145,16 @@ const ScrTextChunker = ({ setTerms }) => {
     setLoading(true);
 
     try {
+      // Adjust the request to match the format of the curl command
       const response = await fetch('https://python-flask-visual-ease.vercel.app/api/extract_terms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ text, level: studyLevel })
+        body: JSON.stringify({
+          text: text,
+          level: studyLevel
+        })
       });
 
       if (!response.ok) {
@@ -159,19 +163,22 @@ const ScrTextChunker = ({ setTerms }) => {
       }
 
       const data = await response.json();
+      const rawTerms = data.terms_and_definitions;
 
-      const parsedTerms = data.terms_and_definitions
-        .split(/\n\d+\.\s/)
-        .filter(entry => entry.trim() !== '')
+      // Parse the terms and definitions from the string response
+      const parsedTerms = rawTerms
+        .split(/\n\d+\.\s/) // Split based on numbering (e.g., \n1. \n2. \n3. ...)
+        .filter(entry => entry.trim() !== '') // Remove any empty strings
         .map(entry => {
-          const match = entry.match(/^\*\*(.*?)\*\*:\s(.*)$/);
+          // Extract term and definition using a regex pattern
+          const match = entry.match(/^\*\*(.*?)\*\*:\s*(.*)$/);
           if (match) {
             return { termName: match[1].trim(), definition: match[2].trim() };
           } else {
             return null;
           }
         })
-        .filter(item => item !== null);
+        .filter(item => item !== null); // Filter out any non-matching entries
 
       if (parsedTerms.length === 0) {
         alert("No terms could be extracted. Please check the input and try again.");
