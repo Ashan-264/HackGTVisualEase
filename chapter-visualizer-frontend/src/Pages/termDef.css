@@ -1,7 +1,6 @@
 body {
     color: white;
     background: -webkit-linear-gradient(black, #03010D);
-    transition: all 1s ease;
 }
 .pageContainerContainer {
     background-image: url("grid.png");

@@ -6,23 +6,25 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
-  background-color: #f4f4f4;
+  background-color: #000;
   min-height: 100vh;
   box-sizing: border-box;
 `;
 
 const ContentWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
+  max-width: 1000px;
   padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: solid 1px rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
 `;
 
 const SectionTitle = styled.h2`
   margin-bottom: 20px;
-  color: #333;
+  color: #fff;
   font-size: 24px;
 `;
 
@@ -54,9 +56,11 @@ const FlashcardInner = styled.div`
 
 const FlashcardFront = styled.div`
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #007bff;
+  width: 80%;
+  margin-right: 7%;
+  height: 80%;
+  border: solid 2px #1B3E5F;
+  background-color: #00264980;
   color: white;
   border-radius: 8px;
   backface-visibility: hidden;
@@ -64,14 +68,16 @@ const FlashcardFront = styled.div`
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-size: 18px;
+  font-size: 20px;
 `;
 
 const FlashcardBack = styled.div`
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #28a745;
+  width: 80%;
+  margin-left: 7%;
+  height: 80%;
+  background: -webkit-linear-gradient(45deg, rgb(12, 116, 214), rgb(69, 132, 191));
+  border: solid 1px rgba(204, 223, 234, 0.236);
   color: white;
   border-radius: 8px;
   backface-visibility: hidden;
@@ -98,6 +104,7 @@ const Button = styled.button`
     background-color: #0056b3;
   }
 `;
+
 
 const Flashcards = ({ terms = [] }) => {  // Ensure terms defaults to an empty array if undefined
   return (

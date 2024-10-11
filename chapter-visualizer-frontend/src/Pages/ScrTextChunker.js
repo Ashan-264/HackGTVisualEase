@@ -145,13 +145,15 @@ const ScrTextChunker = ({ setTerms }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5001/extract_terms', {
+      const response = await fetch('https://python-flask-visual-ease.vercel.app/api/extract_terms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ text, level: studyLevel })
       });
+      
+      
 
       const data = await response.json();
 
@@ -238,7 +240,7 @@ const ScrTextChunker = ({ setTerms }) => {
           </TermsTable>
         </Section>
         
-        <Button>Generate Images</Button>
+        
         <ExportButton onClick={handleExportToPDF}>Export to PDF</ExportButton>
         
         <Link to="/flashcards">
