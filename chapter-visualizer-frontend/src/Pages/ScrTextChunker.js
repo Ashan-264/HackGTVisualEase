@@ -69,7 +69,7 @@ const LevelInput = styled.input`
 
 const TermsTable = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr;  // Two columns, one for terms and one for definitions
+  grid-template-columns: 1fr 2fr;
   gap: 15px;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
@@ -152,8 +152,11 @@ const ScrTextChunker = ({ setTerms }) => {
         },
         body: JSON.stringify({ text, level: studyLevel })
       });
-      
-      
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
 
       const data = await response.json();
 
@@ -178,6 +181,7 @@ const ScrTextChunker = ({ setTerms }) => {
       setTerms(parsedTerms);
     } catch (error) {
       console.error("Error generating terms:", error);
+      alert(`Failed to generate terms: ${error.message}`);
     }
     setLoading(false);
   };
@@ -239,7 +243,6 @@ const ScrTextChunker = ({ setTerms }) => {
             ))}
           </TermsTable>
         </Section>
-        
         
         <ExportButton onClick={handleExportToPDF}>Export to PDF</ExportButton>
         
