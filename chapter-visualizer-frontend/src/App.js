@@ -20,14 +20,16 @@ function App() {
 
     const handleTextSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:5002/summarize', { chapterText: textInput }); // Updated to port 5002
+            const response = await axios.post('/api/summarize', { chapterText: textInput });
+
+
             const parts = response.data; // Assuming response is an array of summarized parts
             setSummaries(parts);
 
             // Generate images for each summary
             parts.forEach(async (part, index) => {
-                const imageResponse = await axios.post('http://localhost:5002/generate-image', { textPart: part }); // Updated to port 5002
-                setImages(prevImages => ({ ...prevImages, [index]: imageResponse.data.imageUrl }));
+                const imageResponse = await axios.post('/api/generate-image', { textPart: part });
+
             });
         } catch (error) {
             console.error('Error processing text:', error);
