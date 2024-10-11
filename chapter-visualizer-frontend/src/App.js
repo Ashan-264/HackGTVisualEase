@@ -8,6 +8,7 @@ import ScrTextChunker from "./Pages/ScrTextChunker";
 import FlashCards from './Pages/FlashCards';
 import About from "./Pages/about";
 import Home from "./Pages/home";
+import { Analytics } from "@vercel/analytics/react";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -61,6 +62,7 @@ function App() {
                     />
                     <Route path="/about" element={<About />} />
                 </Routes>
+                <Analytics />
             </div>
         </Router>
         </div>
