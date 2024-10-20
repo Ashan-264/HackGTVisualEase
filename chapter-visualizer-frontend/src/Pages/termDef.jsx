@@ -12,51 +12,45 @@ export default function TermDef() {
   const [loading, setLoading] = useState(false); // Track loading state
 
   const addAnalogyBox = () => {
-    const analogyBox = document.getElementById("analogyBox");
-    const paragraph = document.getElementById("description");
-    analogyBox.classList.add("active");
-    paragraph.innerText = "Generate an image of your term and definition.";
+    document.getElementById("analogyBox").classList.add("active");
+    document.getElementById("description").innerText = "Generate an image of your term and definition.";
     setGenerationType('image');
   };
 
   const removeAnalogyBox = () => {
-    const analogyBox = document.getElementById("analogyBox");
-    const paragraph = document.getElementById("description");
-    analogyBox.classList.remove("active");
-    paragraph.innerText = "Generate an analogy image of your term and definition.";
+    document.getElementById("analogyBox").classList.remove("active");
+    document.getElementById("description").innerText = "Generate an analogy image of your term and definition.";
     setGenerationType('analogy');
+  };
+
+  const adjustUrlPrefix = (url) => {
+    // Replace 'generated_image-' with 'upload-' in the URL if needed
+    return url.replace('generated_image-', 'upload-');
   };
 
   const handleGenerateImage = async () => {
     const prompt = `${term}: ${definition}${generationType === 'analogy' && analogy ? ` Analogy: ${analogy}` : ''}`;
-    setLoading(true); // Start loading
-    setImageUrl('');  // Clear previous image
-  
+    setLoading(true);
+    setImageUrl(''); // Clear previous image
+
     try {
       const response = await fetch(
         'https://python-flask-visual-ease.vercel.app/api/image_generator',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ textPart: prompt }),
         }
       );
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
-  
+
       const data = await response.json();
-  
-      // Log the received data to verify the response structure
-      console.log('Response from API:', data);
-  
-      // Log the image URL to confirm it's correctly received
-      console.log('Received Image URL:', data.imageUrl);
-  
+      console.log('Received Image URL (raw):', data.imageUrl); // Log original URL
+
       // Adjust the URL if necessary and log the new URL
       const adjustedUrl = adjustUrlPrefix(data.imageUrl);
       console.log('Adjusted Image URL:', adjustedUrl);
@@ -69,7 +63,6 @@ export default function TermDef() {
       setLoading(false); // Stop loading
     }
   };
-  
 
   return (
     <div className="pageContainerContainer">
@@ -80,7 +73,7 @@ export default function TermDef() {
         </p>
         <div className="container" data-aos="fade-up">
           <div className="container1">
-            <p style={{ marginTop: '0px' }}>Input Term</p>
+            <p>Input Term</p>
             <textarea
               placeholder="e.g., Mitochondria"
               value={term}
@@ -96,7 +89,7 @@ export default function TermDef() {
           </div>
           <div className="container2">
             <form>
-              <p style={{ marginTop: '0px' }}>Generation Type</p>
+              <p>Generation Type</p>
               <input
                 type="radio"
                 name="genType"
@@ -105,7 +98,7 @@ export default function TermDef() {
                 onChange={addAnalogyBox}
                 required
               />
-              <label style={{ marginLeft: '5px' }} htmlFor="image">Image</label><br />
+              <label htmlFor="image">Image</label><br />
               <input
                 type="radio"
                 name="genType"
@@ -113,7 +106,7 @@ export default function TermDef() {
                 onChange={removeAnalogyBox}
                 required
               />
-              <label style={{ marginLeft: '5px' }} htmlFor="analogy">Analogy</label>
+              <label htmlFor="analogy">Analogy</label>
               <p id="description"></p>
               <div id="analogyBox" className="active">
                 <p>Analogy Box</p>
