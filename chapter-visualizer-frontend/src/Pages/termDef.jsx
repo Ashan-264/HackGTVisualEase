@@ -31,7 +31,7 @@ export default function TermDef() {
     const prompt = `${term}: ${definition}${generationType === 'analogy' && analogy ? ` Analogy: ${analogy}` : ''}`;
     setLoading(true); // Start loading
     setImageUrl('');  // Clear previous image
-
+  
     try {
       const response = await fetch(
         'https://python-flask-visual-ease.vercel.app/api/image_generator',
@@ -43,13 +43,20 @@ export default function TermDef() {
           body: JSON.stringify({ textPart: prompt }),
         }
       );
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
-
+  
       const data = await response.json();
+  
+      // Log the received data to verify the response structure
+      console.log('Response from API:', data);
+  
+      // Log the image URL to confirm it's correctly received
+      console.log('Received Image URL:', data.imageUrl);
+  
       setImageUrl(data.imageUrl); // Set the image URL from Blob storage
     } catch (error) {
       console.error('Error generating image:', error);
@@ -58,6 +65,7 @@ export default function TermDef() {
       setLoading(false); // Stop loading
     }
   };
+  
 
   return (
     <div className="pageContainerContainer">
