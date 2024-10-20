@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import "./termDef.css";
-import axios from 'axios';
 
 export default function TermDef() {
   document.title = "Term Visualizer - VisualEase";
@@ -10,6 +9,7 @@ export default function TermDef() {
   const [generationType, setGenerationType] = useState('image');
   const [analogy, setAnalogy] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false); // Track loading state
 
   const addAnalogyBox = () => {
     const analogyBox = document.getElementById("analogyBox");
@@ -29,11 +29,33 @@ export default function TermDef() {
 
   const handleGenerateImage = async () => {
     const prompt = `${term}: ${definition}${generationType === 'analogy' && analogy ? ` Analogy: ${analogy}` : ''}`;
+    setLoading(true); // Start loading
+    setImageUrl('');  // Clear previous image
+
     try {
-      const response = await axios.post('http://localhost:5002/generate-image', { textPart: prompt });
-      setImageUrl(response.data.imageUrl);
+      const response = await fetch(
+        'https://python-flask-visual-ease.vercel.app/api/image_generator',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ textPart: prompt }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      setImageUrl(data.imageUrl); // Set the image URL from Blob storage
     } catch (error) {
       console.error('Error generating image:', error);
+      alert('Failed to generate image. Please try again.');
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -41,7 +63,9 @@ export default function TermDef() {
     <div className="pageContainerContainer">
       <div className="pageContainer">
         <h1 className="title">Term Visualizer</h1>
-        <p className="subTitle">Use our term visualizer to create images that represent your study terms or create analogies to remember term definitions.</p>
+        <p className="subTitle">
+          Use our term visualizer to create images that represent your study terms or create analogies to remember term definitions.
+        </p>
         <div className="container" data-aos="fade-up">
           <div className="container1">
             <p style={{ marginTop: '0px' }}>Input Term</p>
@@ -91,20 +115,22 @@ export default function TermDef() {
             </form>
           </div>
         </div>
-        <button className="generate" onClick={handleGenerateImage}>Generate Image</button>
+        <button className="generate" onClick={handleGenerateImage} disabled={loading}>
+          {loading ? 'Generating...' : 'Generate Image'}
+        </button>
 
         {/* Display the generated image if available */}
         {imageUrl && (
-          <div style={{ textAlign: 'center', marginTop: '20px' }}> {/* Center the image within the container */}
-            <img 
-              src={`http://localhost:5002/${imageUrl}`} 
-              alt="Generated" 
-              style={{ 
-                maxWidth: '40%', /* Make sure the image is responsive */
-                height: 'auto', /* Maintain aspect ratio */
-                border: '2px solid #ddd', /* Optional: Add a border around the image */
-                borderRadius: '8px' /* Optional: Add slight rounding to the corners */
-              }} 
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <img
+              src={imageUrl}
+              alt="Generated"
+              style={{
+                maxWidth: '40%',
+                height: 'auto',
+                border: '2px solid #ddd',
+                borderRadius: '8px',
+              }}
             />
           </div>
         )}
