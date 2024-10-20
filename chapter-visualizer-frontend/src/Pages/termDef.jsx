@@ -57,10 +57,14 @@ export default function TermDef() {
       // Log the image URL to confirm it's correctly received
       console.log('Received Image URL:', data.imageUrl);
   
-      setImageUrl(data.imageUrl); // Set the image URL from Blob storage
+      // Adjust the URL if necessary and log the new URL
+      const adjustedUrl = adjustUrlPrefix(data.imageUrl);
+      console.log('Adjusted Image URL:', adjustedUrl);
+
+      setImageUrl(adjustedUrl); // Use the adjusted URL
     } catch (error) {
-      console.error('Error generating image:', error);
-      alert('Failed to generate image. Please try again.');
+      console.error('Error generating or retrieving image:', error);
+      alert('Failed to generate or retrieve the image. Please try again.');
     } finally {
       setLoading(false); // Stop loading
     }
